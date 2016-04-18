@@ -2,4 +2,4 @@
 Kirk's Zeppelin Notebooks
 
 
-![alt tag](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+![alt tag](https://github.com/kirkhas/zeppelin-notebooks/blob/master/stock-variance/StockVariance.png)

@@ -507,7 +507,7 @@
       "progressUpdateIntervalMs": 500
     }
   ],
-  "name": "JPMC",
+  "name": "Stock Close Price Variance",
   "id": "2BG3KYTK1",
   "angularObjects": {
     "2BCA5VUSP": [],

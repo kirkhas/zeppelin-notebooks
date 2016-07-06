@@ -192,7 +192,7 @@
     },
     {
       "text": "case class Test(id: Int, name: String, price:Double)\nval l \u003d List(Test(1,\"kirk\", 2.3), Test(2, \"maria\", 5.0), Test(3, \"kevin\", 4.0) )\n\nval r \u003dsc.parallelize(l)\n\nval rs \u003d r.fold(Test(0, \"\", 0.0)) {\n     (acc, test) \u003d\u003e\n     if (acc.price \u003e test.price) acc else test\n}",
-      "dateUpdated": "Jul 6, 2016 12:44:39 PM",
+      "dateUpdated": "Jul 6, 2016 1:39:37 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -205,7 +205,8 @@
           "scatter": {}
         },
         "enabled": true,
-        "editorMode": "ace/mode/scala"
+        "editorMode": "ace/mode/scala",
+        "editorHide": true
       },
       "settings": {
         "params": {},
@@ -226,7 +227,7 @@
     },
     {
       "text": "List(1,2,3).foldLeft(0)( (acc,b) \u003d\u003e acc+b)",
-      "dateUpdated": "Jul 6, 2016 12:44:39 PM",
+      "dateUpdated": "Jul 6, 2016 1:39:39 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -239,7 +240,8 @@
           "scatter": {}
         },
         "enabled": true,
-        "editorMode": "ace/mode/scala"
+        "editorMode": "ace/mode/scala",
+        "editorHide": true
       },
       "settings": {
         "params": {},

@@ -1,0 +1,295 @@
+{
+  "paragraphs": [
+    {
+      "title": "Created by Kirk Haslbeck @ Hortonworks",
+      "text": "println(\"%text Imagine you are ingesting JSON msgs but each one has different tag names or even a different structure.  This is very common because JSON is a flexible nested structure. However we commonly interact with data in a flat table like structure using SQL. The decision becomes to either parse the dynamic data into a physical schema (on write) or apply a schema at runtime (on read).  Ultimately the decision will likely be made based on the number of writes vs reads.  However there is one major advatange to using Spark to apply schema on read to JSON events, it allieviates the parsing step.  Typically you have to hand code all the tags in the JSON msgs and map each one to a schema column. This may require meeting with upstream teams or third parties to get the DDL/xsd or schema definition.  It also doesn\u0027t protect you from msgs you haven\u0027t seen or new tags being added to existing JSON structures.  Sparks schema on read handles all of this as well as flattens the structure into a SQL queryable table. In the example below there are 3 different JSON msgs each with different tags and structures.  If the goal is to normalize the data for a specific reporting or data science task you may be better off defining a physical schema where items like price and strikePrice are converged to a common column that makes sense in both contexts. However if your goal is to process or serve msgs like a msg bus, or if you find that it is better to query stocks separately from options because the attributes should not be interpreted and you do not want to become the author of the data you are processing then this could be an ideal approach. (A non-authoritative, low maintenence approach that is queryable)\" )",
+      "dateUpdated": "Jul 6, 2016 1:34:04 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala",
+        "tableHide": false,
+        "title": true,
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1466814942628_-1066870656",
+      "id": "20160625-003542_1364616469",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "Imagine you are ingesting JSON msgs but each one has different tag names or even a different structure.  This is very common because JSON is a flexible nested structure. However we commonly interact with data in a flat table like structure using SQL. The decision becomes to either parse the dynamic data into a physical schema (on write) or apply a schema at runtime (on read).  Ultimately the decision will likely be made based on the number of writes vs reads.  However there is one major advatange to using Spark to apply schema on read to JSON events, it allieviates the parsing step.  Typically you have to hand code all the tags in the JSON msgs and map each one to a schema column. This may require meeting with upstream teams or third parties to get the DDL/xsd or schema definition.  It also doesn\u0027t protect you from msgs you haven\u0027t seen or new tags being added to existing JSON structures.  Sparks schema on read handles all of this as well as flattens the structure into a SQL queryable table. In the example below there are 3 different JSON msgs each with different tags and structures.  If the goal is to normalize the data for a specific reporting or data science task you may be better off defining a physical schema where items like price and strikePrice are converged to a common column that makes sense in both contexts. However if your goal is to process or serve msgs like a msg bus, or if you find that it is better to query stocks separately from options because the attributes should not be interpreted and you do not want to become the author of the data you are processing then this could be an ideal approach. (A non-authoritative, low maintenence approach that is queryable)\n"
+      },
+      "dateCreated": "Jun 25, 2016 12:35:42 AM",
+      "dateStarted": "Jul 6, 2016 1:33:59 PM",
+      "dateFinished": "Jul 6, 2016 1:33:59 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "title": "Read 3 different JSON Msg Structures",
+      "text": "val events \u003d sc.parallelize(\n    \"\"\"{\"tradeId\":\"123\", \"assetClass\":\"stock\",  \"transType\":\"buy\",  \"price\":\"22.34\", \"stockAttributes\":{\"5avg\":\"20.12\",\"52weekHi\":\"27.56\"}}\"\"\" ::\n    \"\"\"{\"tradeId\":\"456\", \"assetClass\":\"future\", \"transType\":\"sell\", \"strikePrice\":\"40.00\", \"contractType\": \"forward\" ,\"account\":{\"city\":\"Columbus\",\"state\":\"Ohio\",  \"zip\":\"21000\"}}\"\"\" ::\n    \"\"\"{\"tradeId\":\"789\", \"assetClass\":\"option\", \"transType\":\"buy\",  \"strikePrice\":\"35.75\", \"account\":{\"accountType\":\"retail\",\"city\":\"Columbus\",\"state\":\"Ohio\"}}\"\"\" ::\nNil)\n\nval jsonEvents  \u003d sqlc.read.json(events)\njsonEvents.registerTempTable(\"events\")",
+      "dateUpdated": "Jul 6, 2016 1:31:32 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala",
+        "tableHide": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1466725436507_997636378",
+      "id": "20160623-234356_1446912281",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "events: org.apache.spark.rdd.RDD[String] \u003d ParallelCollectionRDD[59] at parallelize at \u003cconsole\u003e:29\njsonEvents: org.apache.spark.sql.DataFrame \u003d [account: struct\u003caccountType:string,city:string,state:string,zip:string\u003e, assetClass: string, contractType: string, price: string, stockAttributes: struct\u003c52weekHi:string,5avg:string\u003e, strikePrice: string, tradeId: string, transType: string]\n"
+      },
+      "dateCreated": "Jun 23, 2016 11:43:56 PM",
+      "dateStarted": "Jul 6, 2016 1:31:32 PM",
+      "dateFinished": "Jul 6, 2016 1:31:33 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql SELECT tradeId, account.city, account.state, account.accountType, price, \nstrikePrice, stockAttributes.5avg FROM events",
+      "dateUpdated": "Jul 6, 2016 1:30:08 PM",
+      "config": {
+        "colWidth": 6.0,
+        "graph": {
+          "mode": "table",
+          "height": 242.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "tradeId",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "city",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "yAxis": {
+              "name": "city",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1466725720013_-1568271006",
+      "id": "20160623-234840_1401096905",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "tradeId\tcity\tstate\taccountType\tprice\tstrikePrice\t5avg\n123\tnull\tnull\tnull\t22.34\tnull\t20.12\n456\tColumbus\tOhio\tnull\tnull\t40.00\tnull\n789\tColumbus\tOhio\tretail\tnull\t35.75\tnull\n"
+      },
+      "dateCreated": "Jun 23, 2016 11:48:40 PM",
+      "dateStarted": "Jul 6, 2016 1:16:17 PM",
+      "dateFinished": "Jul 6, 2016 1:16:17 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql SELECT tradeId, assetClass, account.city from events\n",
+      "dateUpdated": "Jul 6, 2016 1:30:01 PM",
+      "config": {
+        "colWidth": 6.0,
+        "graph": {
+          "mode": "pieChart",
+          "height": 248.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "city",
+              "index": 2.0,
+              "aggr": "sum"
+            },
+            {
+              "name": "assetClass",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "assetClass",
+              "index": 1.0,
+              "aggr": "count"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "tradeId",
+              "index": 0.0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "assetClass",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/sql",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1466726284426_-454598608",
+      "id": "20160623-235804_1351605762",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "tradeId\tassetClass\tcity\n123\tstock\tnull\n456\tfuture\tColumbus\n789\toption\tColumbus\n"
+      },
+      "dateCreated": "Jun 23, 2016 11:58:04 PM",
+      "dateStarted": "Jul 6, 2016 1:12:30 PM",
+      "dateFinished": "Jul 6, 2016 1:12:30 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "case class Test(id: Int, name: String, price:Double)\nval l \u003d List(Test(1,\"kirk\", 2.3), Test(2, \"maria\", 5.0), Test(3, \"kevin\", 4.0) )\n\nval r \u003dsc.parallelize(l)\n\nval rs \u003d r.fold(Test(0, \"\", 0.0)) {\n     (acc, test) \u003d\u003e\n     if (acc.price \u003e test.price) acc else test\n}",
+      "dateUpdated": "Jul 6, 2016 12:44:39 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1466726981748_-1871248991",
+      "id": "20160624-000941_289460906",
+      "result": {
+        "code": "ERROR",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "Jun 24, 2016 12:09:41 AM",
+      "dateStarted": "Jul 6, 2016 12:44:43 PM",
+      "dateFinished": "Jul 6, 2016 12:44:45 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "List(1,2,3).foldLeft(0)( (acc,b) \u003d\u003e acc+b)",
+      "dateUpdated": "Jul 6, 2016 12:44:39 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1466814667617_422493981",
+      "id": "20160625-003107_1776743714",
+      "result": {
+        "code": "ERROR",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "Jun 25, 2016 12:31:07 AM",
+      "dateStarted": "Jul 6, 2016 12:44:45 PM",
+      "dateFinished": "Jul 6, 2016 12:44:46 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1467809079075_-384352949",
+      "id": "20160706-124439_417128441",
+      "dateCreated": "Jul 6, 2016 12:44:39 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "JSON 2 SQL",
+  "id": "2BR65CT1C",
+  "angularObjects": {
+    "2BGB1KDJK": [],
+    "2BKJ9KGP5": [],
+    "2BH2WXHBW": [],
+    "2BHM6DKZX": [],
+    "2BK7R4XWB": [],
+    "2BGY3VMCR": [],
+    "2BH33NT6K": [],
+    "2BG3XND3S": [],
+    "2BKGSBKA6": [],
+    "2BGF2ZHVN": [],
+    "2BJCNRBWN": [],
+    "2BG1J2MVM": [],
+    "2BGX1S86X": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}

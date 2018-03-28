@@ -1,8 +1,8 @@
 
 # Preventive Maintenance
 
-Strength of Relationship in the Data
-![alt tag](https://github.com/kirkhas/zeppelin-notebooks/blob/master/Preventive_maintenance/corImg.png)
+Feature Selection, Strength of Relationship in the Data
+![alt tag](https://github.com/kirkhas/zeppelin-notebooks/blob/master/Preventive_maintenance/corrImg.png)
 
 Geolocation
 ![map](https://github.com/kirkhas/zeppelin-notebooks/blob/master/Preventive_maintenance/map.png)
